@@ -4,14 +4,63 @@ function 3. Structured numeric data (attendance, marks) intentionally does
 NOT go through this; see decision/checks.py and sheets/google_sheets_client.py.
 """
 import os
+# Suppress ChromaDB's noisy telemetry error (must be set before chromadb imports)
+os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
+import httpx
 import pandas as pd
+from typing import List
 from langchain_core.documents import Document
+from langchain_core.embeddings import Embeddings
 from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
 
 import config
 
-_embeddings = HuggingFaceEmbeddings(model_name=config.EMBEDDING_MODEL)
+
+class OpenRouterEmbeddings(Embeddings):
+    """
+    Calls OpenRouter's /embeddings endpoint directly via httpx, bypassing the
+    openai SDK's strict response parser that raises 'No embedding data received'
+    when the response format differs slightly from OpenAI's canonical schema.
+    """
+
+    def __init__(self, model: str, api_key: str, base_url: str):
+        self.model = model
+        self.api_key = api_key
+        self.base_url = base_url.rstrip("/")
+
+    def _embed(self, texts: List[str]) -> List[List[float]]:
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {"model": self.model, "input": texts}
+        response = httpx.post(
+            f"{self.base_url}/embeddings",
+            headers=headers,
+            json=payload,
+            timeout=60,
+        )
+        response.raise_for_status()
+        data = response.json()
+        # Handle both {"data": [{"embedding": [...]}]} and flat {"embeddings": [...]}
+        if "data" in data:
+            return [item["embedding"] for item in data["data"]]
+        if "embeddings" in data:
+            return data["embeddings"]
+        raise ValueError(f"Unexpected embedding response shape: {list(data.keys())}")
+
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        return self._embed(texts)
+
+    def embed_query(self, text: str) -> List[float]:
+        return self._embed([text])[0]
+
+
+_embeddings = OpenRouterEmbeddings(
+    model=config.EMBEDDING_MODEL,
+    api_key=config.OPENROUTER_API_KEY,
+    base_url=config.OPENROUTER_BASE_URL,
+)
 _vectorstore = None
 
 
