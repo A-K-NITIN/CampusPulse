@@ -1,0 +1,8 @@
+Subject: Data Structures
+Topic: Trees and Binary Search Trees
+Type: notes
+
+Concise notes covering tree terminology, binary search tree insertion,
+deletion, and traversal (inorder/preorder/postorder), with worked examples
+and time-complexity analysis for balanced vs unbalanced trees.
+Link: https://example.edu/notes/bst-notes.pdf

@@ -1,0 +1,8 @@
+Subject: Operating Systems
+Topic: Deadlocks
+Type: notes
+
+Notes on deadlock conditions (mutual exclusion, hold and wait, no
+preemption, circular wait), detection algorithms, and prevention/avoidance
+strategies including the Banker's Algorithm with a worked example.
+Link: https://example.edu/notes/os-deadlocks.pdf
