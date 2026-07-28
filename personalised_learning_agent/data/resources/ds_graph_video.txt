@@ -1,0 +1,8 @@
+Subject: Data Structures
+Topic: Graph Traversal (BFS/DFS)
+Type: video
+
+A 25-minute walkthrough of breadth-first and depth-first search on graphs,
+including adjacency list/matrix representations and common interview-style
+problems solved step by step.
+Link: https://example.edu/videos/graph-traversal

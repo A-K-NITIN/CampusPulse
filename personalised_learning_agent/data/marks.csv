@@ -1,0 +1,9 @@
+roll_no,subject,exam_type,score,max_score
+21CS001,Data Structures,CIA1,38,50
+21CS001,Operating Systems,CIA1,22,50
+21CS002,Data Structures,CIA1,45,50
+21CS002,Operating Systems,CIA1,40,50
+21CS003,Data Structures,CIA1,19,50
+21CS003,Operating Systems,CIA1,25,50
+21IT002,Database Systems,CIA1,17,50
+21IT002,Computer Networks,CIA1,20,50

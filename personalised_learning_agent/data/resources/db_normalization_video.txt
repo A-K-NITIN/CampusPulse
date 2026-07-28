@@ -1,0 +1,8 @@
+Subject: Database Systems
+Topic: Normalization
+Type: video
+
+An 18-minute video explaining 1NF, 2NF, 3NF, and BCNF with a running
+example schema, showing how to identify functional dependencies and
+decompose tables step by step.
+Link: https://example.edu/videos/db-normalization

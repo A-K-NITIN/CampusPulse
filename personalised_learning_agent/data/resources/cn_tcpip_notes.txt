@@ -1,0 +1,8 @@
+Subject: Computer Networks
+Topic: TCP/IP Layers
+Type: notes
+
+Layer-by-layer notes on the TCP/IP model (link, internet, transport,
+application), contrasted with the OSI model, covering key protocols at
+each layer and common exam question patterns.
+Link: https://example.edu/notes/tcpip-layers.pdf
