@@ -1,0 +1,5 @@
+.env
+credentials/*.json
+vectorstore/
+__pycache__/
+*.pyc
