@@ -8,10 +8,12 @@ Design:
     description. It uses its tools to gather any extra context it needs
     (base papers, hackathon listings, student reports), drafts the message
     itself, and finishes by calling send_email to dispatch it.
+
+LangChain 1.x / LangGraph — uses create_react_agent (replaces the removed
+AgentExecutor + create_tool_calling_agent from older LangChain versions).
 """
 from langchain_openai import ChatOpenAI
-from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langgraph.prebuilt import create_react_agent
 
 import config
 from tools.send_email_tool import send_email
@@ -56,19 +58,43 @@ TOOLS = [
 ]
 
 
-def build_agent_executor() -> AgentExecutor:
+def build_agent_executor():
+    """
+    Returns a LangGraph react agent (replaces the removed AgentExecutor).
+    Call with: agent.invoke({"messages": [("user", task_text)]})
+    The wrapper invoke() below keeps the call-site identical to the old API.
+    """
     llm = ChatOpenAI(
-        model=config.OPENROUTER_MODEL,
+        model=config.OPENROUTER_LLM_MODEL,
         api_key=config.OPENROUTER_API_KEY,
         base_url=config.OPENROUTER_BASE_URL,
         temperature=0.3,
     )
 
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", SYSTEM_PROMPT),
-        ("human", "{input}"),
-        MessagesPlaceholder(variable_name="agent_scratchpad"),
-    ])
+    agent = create_react_agent(
+        model=llm,
+        tools=TOOLS,
+        prompt=SYSTEM_PROMPT,
+    )
 
-    agent = create_tool_calling_agent(llm, TOOLS, prompt)
-    return AgentExecutor(agent=agent, tools=TOOLS, verbose=True)
+    # Thin wrapper so jobs.py can keep calling agent_executor.invoke({"input": task})
+    return _AgentWrapper(agent)
+
+
+class _AgentWrapper:
+    """
+    Adapts the LangGraph agent to the old AgentExecutor.invoke({"input": ...})
+    interface so that scheduler/jobs.py requires zero changes.
+    """
+
+    def __init__(self, graph):
+        self._graph = graph
+
+    def invoke(self, inputs: dict) -> dict:
+        task = inputs.get("input", "")
+        result = self._graph.invoke({"messages": [("user", task)]})
+        # Extract the last AI message as the output
+        messages = result.get("messages", [])
+        output = messages[-1].content if messages else ""
+        print(f"\n[Agent output]: {output}\n")
+        return {"output": output}
