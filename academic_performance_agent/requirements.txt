@@ -1,0 +1,13 @@
+langchain
+langchain-community
+langchain-openai
+langchain-core
+chromadb
+sentence-transformers
+gspread
+google-auth
+pandas
+python-dotenv
+APScheduler
+duckduckgo-search
+arxiv
