@@ -1,0 +1,8 @@
+Subject: Operating Systems
+Topic: Process Scheduling
+Type: practice
+
+20-question practice set on CPU scheduling algorithms (FCFS, SJF, Round
+Robin, Priority Scheduling) with Gantt chart problems and average
+waiting/turnaround time calculations.
+Link: https://example.edu/practice/os-scheduling-set

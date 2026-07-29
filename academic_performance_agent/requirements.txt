@@ -1,0 +1,17 @@
+langchain
+langgraph
+langchain-community
+langchain-openai
+langchain-core
+chromadb
+httpx
+gspread
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+pandas
+python-dotenv
+APScheduler
+ddgs
+arxiv
